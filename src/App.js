@@ -38,6 +38,7 @@ function App() {
     const { playing, muted, volume, playerbackRate, played, seeking } = playerstate;
     const playerRef = useRef(null);
     const playerDivRef = useRef(null);
+    var moved = false;
 
     const useHover = () => {
         const [isHovering, setIsHovering] = React.useState(false);
@@ -98,6 +99,7 @@ function App() {
     }
 
     const handleFullScreenMode = () => {
+        console.log(screenfull.isFullscreen);
         screenfull.toggle(playerDivRef.current)
     }
 
@@ -129,45 +131,22 @@ function App() {
     const playedTime = format(currentPlayerTime);
     const fullMovieTime = format(movieDuration);
     const [hoverRef, isHovering] = useHover();
-
-    const OpOneController = () => {
-        return (
-            <div id="opOne">
-                <ControlIcons
-                    key={volume.toString()}
-                    playandpause={handlePlayAndPause}
-                    playing={playing}
-                    rewind={handleRewind}
-                    fastForward={handleFastForward}
-                    muting={handleMuting}
-                    muted={muted}
-                    volumeChange={handleVolumeChange}
-                    volumeSeek={handleVolumeSeek}
-                    volume={volume}
-                    playerbackRate={playerbackRate}
-                    playRate={handlePlayerRate}
-                    fullScreenMode={handleFullScreenMode}
-                    played={played}
-                    onSeek={handlePlayerSeek}
-                    onSeekMouseUp={handlePlayerMouseSeekUp}
-                    onSeekMouseDown={handlePlayerMouseSeekDown}
-                    playedTime={playedTime}
-                    fullMovieTime={fullMovieTime}
-                    seeking={seeking}
-                />
-            </div>
-        )
-    };
-
-    const OpZeroController = () => {
-        return (
-            <div id="opZero">
-
-            </div>
-        )
-    };
+    var timer;
+    window.onmousemove = function(e){
+        console.log("Mouse moved");
+        if(screenfull.isFullscreen){
+            document.getElementById("xyz").className = "opOne";
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                document.getElementById("xyz").className = "opZero";
+            }, 1500);
+        }
+    }
 
     React.useEffect(() => {
+        if(screenfull.isFullscreen){
+            return;
+        }
         if(isHovering)
         {
             document.getElementById("xyz").className = "opOne";
